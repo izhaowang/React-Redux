@@ -173,4 +173,81 @@ store.subscribe(render); // 建通函数
 
 ```
 
+```
+actionType.js
+export const INCREMENT = 'increment';
 
+export const DECREMENT = 'decrement';
+
+{ // 相当于导出
+  INCREMENT : 'increment',
+  DECREAMENT: 'decrement'
+}
+
+
+
+action.js
+import * as ActionTypes from './ActionTypes.js';
+//ActionTypes = { // 相当于
+//  INCREMENT : 'increment',
+//  DECREAMENT: 'decrement'
+//}
+export const increment = (counterCaption) => {
+  return {
+    type: ActionTypes.INCREMENT, // 相当于 'increment'
+    counterCaption: counterCaption
+  };
+};
+
+export const decrement = (counterCaption) => {
+  return {
+    type: ActionTypes.DECREMENT, // 相当于 'decrement'
+    counterCaption: counterCaption
+  };
+};
+
+
+
+// 1.在组件中通过 Store.dispatch(action) // 触发一个action; 
+Actions = {
+  increament: {
+    type: 'increment',
+    counterCaption: counterCaption // First Second Third
+  },
+  decrement: {
+    type: 'decrement',
+    counterCaption: counterCaption // First Second Third
+  }
+}
+store.dispatch(Actions.increment(this.props.caption));  // 相当于 => store.dispatch({type:'increment', caption: this.props.caption});
+
+// 2.然后 调用reducer 函数 然后stroe 调用Renduce (当前的state, Action); 并且返回一个新的state
+
+// reducer.js 中
+import * as ActionTypes from './ActionTypes.js';
+
+export default (state, action) => {
+  // state 是某个时刻所有的数据 刚开始 {First: 0, Second: 10, Third: 20}  First+1 后 
+  const {counterCaption} = action; // action 是 dispatch 的数据 {type:'increment', caption: this.props.caption}  222行
+
+  switch (action.type) {
+    case ActionTypes.INCREMENT:
+      return {...state, [counterCaption]: state[counterCaption] + 1}; // 这里利用扩展运算符进行 数组的合并
+    case ActionTypes.DECREMENT:
+      return {...state, [counterCaption]: state[counterCaption] - 1};
+    default:
+      return state
+  }
+}
+// state 是目前的 state; actions 是 {type:'increment', caption: this.props.caption} 然后返回新的state
+// 这里reducer(state, action) 返回的的是一个 对象 { } 值
+
+//3. state 改变了调用 Store.subscribe() 监听方法
+
+componentDidMount() {
+    store.subscribe(this.onChange);  // 调用监听的方法 后续进行 this.setState({value: 最新的值}) 
+ }
+ onChange() {
+    this.setState(this.getOwnState());
+ }
+```
